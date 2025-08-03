@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Friendship Day - 3D Celebration</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Orbitron:wght@900&display=swap');
+        
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background: linear-gradient(45deg, #ff006e, #8338ec, #3a86ff, #ffbe0b);
+            background-size: 400% 400%;
+            animation: gradientShift 8s ease-in-out infinite;
+        }
+        
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+        
+        .title {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'Orbitron', cursive;
+            font-size: 3.5rem;
+            font-weight: 900;
+            background: linear-gradient(45deg, #ff006e, #8338ec, #3a86ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.8);
+            z-index: 10;
+            animation: glow 2s ease-in-out infinite alternate;
+            white-space: nowrap;
+            margin-top: 20px;
+        }
+        
+        @keyframes glow {
+            from { text-shadow: 0 0 30px rgba(255, 255, 255, 0.8); }
+            to { text-shadow: 0 0 50px rgba(255, 255, 255, 1), 0 0 70px rgba(255, 255, 255, 0.8); }
+        }
+        
+        .friend-name {
+            position: absolute;
+            top: 50%;
+            font-family: 'Orbitron', cursive;
+            font-size: 2.2rem;
+            font-weight: 900;
+            color: white;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.9), 0 0 40px rgba(255, 255, 255, 0.6);
+            z-index: 10;
+            transform: translateX(-50%) translateY(-50%);
+            background: linear-gradient(45deg, #ff006e, #8338ec, #3a86ff, #ffbe0b);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientFlow 3s ease-in-out infinite, moveDivya 10s linear infinite;
+            padding: 15px 25px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 25px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .friend-name:hover {
+            transform: translateX(-50%) translateY(-50%) scale(1.1);
+            box-shadow: 0 12px 48px rgba(255, 255, 255, 0.4);
+            border-color: rgba(255, 255, 255, 0.6);
+        }
+        
+        @keyframes gradientFlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .thank-message {
+            position: absolute;
+            bottom: 5%;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'Pacifico', cursive;
+            font-size: 2rem;
+            color: white;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
+            z-index: 10;
+            animation: pulse 3s ease-in-out infinite;
+            white-space: nowrap;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 0.8; transform: translateX(-50%) scale(1); }
+            50% { opacity: 1; transform: translateX(-50%) scale(1.05); }
+        }
+        
+        @media (max-width: 768px) {
+            .title {
+                font-size: 1.75rem;
+                top: 2%;
+                margin-top: 10px;
+            }
+            .friend-name {
+                font-size: 0.9rem;
+                padding: 8px 12px;
+                border-radius: 15px;
+                box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+            }
+            .thank-message {
+                font-size: 1.1rem;
+                bottom: 2%;
+                white-space: nowrap;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .title {
+                font-size: 1.5rem;
+                margin-top: 5px;
+            }
+            .friend-name {
+                font-size: 0.75rem;
+                padding: 6px 10px;
+                white-space: nowrap;
+            }
+            .thank-message {
+                font-size: 0.9rem;
+                white-space: nowrap;
+                padding: 0 8px;
+            }
+        }
+        
+        .particle {
+            position: absolute;
+            pointer-events: none;
+            opacity: 0.8;
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+    </style>
+</head>
+<body>
+    <div id="canvas-container"></div>
+    
+    <h1 class="title">Happy Friendship Day!</h1>
+    
+    <div class="friend-name" style="left: 15%; top: 35%; animation-name: gradientFlow, moveDivya;" data-friend="divya">Divya Mami</div>
+    <div class="friend-name" style="left: 30%; top: 65%; animation-name: gradientFlow, moveJay;" data-friend="jay">Jay Bot</div>
+    <div class="friend-name" style="left: 50%; top: 25%; animation-name: gradientFlow, moveNakto;" data-friend="nakto">Nakto Goglu</div>
+    <div class="friend-name" style="left: 70%; top: 70%; animation-name: gradientFlow, moveMannu;" data-friend="mannu">Mannu Bhai</div>
+    <div class="friend-name" style="left: 85%; top: 45%; animation-name: gradientFlow, moveMuna;" data-friend="muna">Muna Don</div>
+    
+    <div class="thank-message">Thank you for being amazing friends!</div>
+
+    <style>
+        @keyframes moveDivya {
+            0% { transform: translateX(-50%) translateY(-50%) translate(0, 0); }
+            25% { transform: translateX(-50%) translateY(-50%) translate(30px, -20px); }
+            50% { transform: translateX(-50%) translateY(-50%) translate(0, -40px); }
+            75% { transform: translateX(-50%) translateY(-50%) translate(-30px, -20px); }
+            100% { transform: translateX(-50%) translateY(-50%) translate(0, 0); }
+        }
+        @keyframes moveJay {
+            0% { transform: translateX(-50%) translateY(-50%) translate(0, 0); }
+            25% { transform: translateX(-50%) translateY(-50%) translate(20px, 30px); }
+            50% { transform: translateX(-50%) translateY(-50%) translate(-20px, 0); }
+            75% { transform: translateX(-50%) translateY(-50%) translate(20px, -30px); }
+            100% { transform: translateX(-50%) translateY(-50%) translate(0, 0); }
+        }
+        @keyframes moveNakto {
+            0% { transform: translateX(-50%) translateY(-50%) translate(0, 0); }
+            25% { transform: translateX(-50%) translateY(-50%) translate(-25px, 15px); }
+            50% { transform: translateX(-50%) translateY(-50%) translate(0, 30px); }
+            75% { transform: translateX(-50%) translateY(-50%) translate(25px, 15px); }
+            100% { transform: translateX(-50%) translateY(-50%) translate(0, 0); }
+        }
+        @keyframes moveMannu {
+            0% { transform: translateX(-50%) translateY(-50%) translate(0, 0); }
+            25% { transform: translateX(-50%) translateY(-50%) translate(35px, 25px); }
+            50% { transform: translateX(-50%) translateY(-50%) translate(-35px, 0); }
+            75% { transform: translateX(-50%) translateY(-50%) translate(0, -25px); }
+            100% { transform: translateX(-50%) translateY(-50%) translate(0, 0); }
+        }
+        @keyframes moveMuna {
+            0% { transform: translateX(-50%) translateY(-50%) translate(0, 0); }
+            25% { transform: translateX(-50%) translateY(-50%) translate(-30px, -25px); }
+            50% { transform: translateX(-50%) translateY(-50%) translate(30px, 0); }
+            75% { transform: translateX(-50%) translateY(-50%) translate(0, 25px); }
+            100% { transform: translateX(-50%) translateY(-50%) translate(0, 0); }
+        }
+    </style>
+
+    <script>
+        // Three.js setup
+        let scene, camera, renderer;
+        let characters = [];
+        let particles = [];
+        let emojis = [];
+        let mouseX = 0, mouseY = 0;
+
+        // Emoji textures
+        const emojiTextures = [
+            '😊', '❤️', '🤗', '🎉', '🎈', '✨', '💖', '👯', '🥳', '🎊',
+            '💕', '💞', '💓', '💗', '💘', '💝', '💟', '💌', '💋', '💯',
+            '🌈', '🌻', '🌞', '🌸', '🌼', '🍀', '🎁', '🎀', '🎗️', '🏆',
+            '🤝', '👫', '👭', '👬', '🫂', '💑', '💏', '💞', '💍', '💐'
+        ];
+
+        function init() {
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+            // Lighting
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+            scene.add(ambientLight);
+            
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+            directionalLight.position.set(5, 10, 5);
+            directionalLight.castShadow = true;
+            scene.add(directionalLight);
+
+            // Create floating particles
+            createParticles();
+            
+            // Create floating emojis
+            createEmojis();
+
+            camera.position.z = 8;
+
+            animate();
+        }
+
+        function createEmojis() {
+            const emojiCount = 30;
+            const canvas = document.createElement('canvas');
+            canvas.width = 64;
+            canvas.height = 64;
+            const context = canvas.getContext('2d');
+            
+            for (let i = 0; i < emojiCount; i++) {
+                // Clear canvas
+                context.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // Draw emoji
+                context.font = '48px serif';
+                context.textAlign = 'center';
+                context.textBaseline = 'middle';
+                context.fillText(emojiTextures[Math.floor(Math.random() * emojiTextures.length)], 32, 32);
+                
+                // Create texture
+                const texture = new THREE.CanvasTexture(canvas);
+                const material = new THREE.SpriteMaterial({ 
+                    map: texture,
+                    transparent: true,
+                    opacity: 0.8,
+                    color: new THREE.Color(Math.random() * 0xffffff)
+                });
+                
+                const sprite = new THREE.Sprite(material);
+                sprite.scale.set(0.5, 0.5, 1);
+                sprite.position.set(
+                    (Math.random() - 0.5) * 20,
+                    (Math.random() - 0.5) * 20,
+                    (Math.random() - 0.5) * 10
+                );
+                
+                sprite.userData = {
+                    velocity: new THREE.Vector3(
+                        (Math.random() - 0.5) * 0.01,
+                        (Math.random() - 0.5) * 0.01,
+                        (Math.random() - 0.5) * 0.01
+                    ),
+                    rotationSpeed: Math.random() * 0.02 - 0.01
+                };
+                
+                emojis.push(sprite);
+                scene.add(sprite);
+            }
+        }
+
+        function createParticles() {
+            const particleCount = 50;
+            const geometries = [
+                new THREE.SphereGeometry(0.05, 8, 8), // Hearts
+                new THREE.ConeGeometry(0.05, 0.1, 8),   // Balloons
+                new THREE.SphereGeometry(0.02, 8, 8)    // Sparkles
+            ];
+
+            for (let i = 0; i < particleCount; i++) {
+                const geometry = geometries[Math.floor(Math.random() * geometries.length)];
+                const material = new THREE.MeshPhongMaterial({
+                    color: new THREE.Color(Math.random(), Math.random(), Math.random()),
+                    transparent: true,
+                    opacity: 0.8
+                });
+                
+                const particle = new THREE.Mesh(geometry, material);
+                particle.position.set(
+                    (Math.random() - 0.5) * 20,
+                    (Math.random() - 0.5) * 20,
+                    (Math.random() - 0.5) * 10
+                );
+                particle.userData = {
+                    velocity: new THREE.Vector3(
+                        (Math.random() - 0.5) * 0.02,
+                        (Math.random() - 0.5) * 0.02,
+                        0
+                    )
+                };
+                particles.push(particle);
+                scene.add(particle);
+            }
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // Particle animation
+            particles.forEach(particle => {
+                particle.position.add(particle.userData.velocity);
+                particle.rotation.x += 0.01;
+                particle.rotation.y += 0.01;
+
+                // Reset particles that go too far
+                if (Math.abs(particle.position.x) > 10 || Math.abs(particle.position.y) > 10) {
+                    particle.position.set(
+                        (Math.random() - 0.5) * 20,
+                        (Math.random() - 0.5) * 20,
+                        (Math.random() - 0.5) * 10
+                    );
+                }
+            });
+            
+            // Emoji animation
+            emojis.forEach(emoji => {
+                emoji.position.add(emoji.userData.velocity);
+                emoji.rotation.z += emoji.userData.rotationSpeed;
+                
+                // Reset emojis that go too far
+                if (Math.abs(emoji.position.x) > 12 || Math.abs(emoji.position.y) > 12) {
+                    emoji.position.set(
+                        (Math.random() - 0.5) * 20,
+                        (Math.random() - 0.5) * 20,
+                        (Math.random() - 0.5) * 10
+                    );
+                }
+            });
+
+            // Parallax effect
+            const parallaxX = mouseX * 0.0001;
+            const parallaxY = mouseY * 0.0001;
+            camera.position.x += (parallaxX - camera.position.x) * 0.05;
+            camera.position.y += (-parallaxY - camera.position.y) * 0.05;
+
+            renderer.render(scene, camera);
+        }
+
+        // Mouse movement handler
+        document.addEventListener('mousemove', (event) => {
+            mouseX = (event.clientX - window.innerWidth / 2);
+            mouseY = (event.clientY - window.innerHeight / 2);
+        });
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // Initialize
+        init();
+    </script>
+</body>
+</html>
